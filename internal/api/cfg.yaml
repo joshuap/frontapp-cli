@@ -1,0 +1,12 @@
+package: api
+generate:
+  models: true
+  client: true
+output: front.gen.go
+output-options:
+  include-operation-ids:
+    - search-conversations
+    - get-conversation-by-id
+    - list-conversation-messages
+    - list-inboxes
+    - list-teammate-inboxes
