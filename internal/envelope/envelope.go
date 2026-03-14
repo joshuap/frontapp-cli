@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/url"
 	"os"
+
+	"github.com/joshuap/frontapp-cli/internal/config"
 )
 
 type ParamSpec struct {
@@ -85,7 +87,11 @@ func ClassifyHTTPError(statusCode int, body []byte) (message, code, fix string) 
 
 	switch statusCode {
 	case 401:
-		return msg, "UNAUTHORIZED", "Set FRONT_API_TOKEN or run: front config set token_command '<command>'"
+		fix := "Set FRONT_API_TOKEN or configure token_command in config file"
+		if p, err := config.Path(); err == nil {
+			fix = "Set FRONT_API_TOKEN or configure token_command in " + p
+		}
+		return msg, "UNAUTHORIZED", fix
 	case 404:
 		return msg, "NOT_FOUND", "Check the resource ID and try again"
 	case 403:

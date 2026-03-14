@@ -40,29 +40,13 @@ func TestRootCommand_ListsCommands(t *testing.T) {
 	}
 }
 
-func TestConfigCommand_HasSubcommands(t *testing.T) {
+func TestConfigCommand_NoSubcommands(t *testing.T) {
 	var found bool
 	for _, c := range rootCmd.Commands() {
 		if c.Name() == "config" {
 			found = true
-			if !c.HasSubCommands() {
-				t.Error("config command should have subcommands")
-			}
-			var subs []string
-			for _, s := range c.Commands() {
-				subs = append(subs, s.Name())
-			}
-			for _, expected := range []string{"set", "path"} {
-				has := false
-				for _, s := range subs {
-					if s == expected {
-						has = true
-						break
-					}
-				}
-				if !has {
-					t.Errorf("config missing subcommand %q, has %v", expected, subs)
-				}
+			if c.HasSubCommands() {
+				t.Error("config command should not have subcommands")
 			}
 		}
 	}

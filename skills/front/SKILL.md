@@ -17,16 +17,17 @@ CLI for the Front customer support API. All output is JSON envelopes with `next_
 
 ## Setup
 
-Configure a token command so the CLI can retrieve your API token automatically:
+Set `FRONT_API_TOKEN` and `FRONT_USER` env vars, or configure `token_command` and `user` in `~/.config/front/config.yaml`:
 
-```bash
-front config set token_command "op read op://Private/front_api_token/password"
-front config set user user@example.com
+```yaml
+token_command:
+  - op
+  - read
+  - op://Vault/front_api_token/password
+user: user@example.com
 ```
 
-Alternatively, set `FRONT_API_TOKEN` and `FRONT_USER` env vars (these take precedence over config).
-
-Run `front config` to view current configuration.
+Run `front config` to verify current configuration.
 
 ## Usage
 

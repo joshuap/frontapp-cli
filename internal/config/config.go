@@ -11,8 +11,8 @@ import (
 )
 
 type Config struct {
-	TokenCommand string `yaml:"token_command,omitempty"`
-	User         string `yaml:"user,omitempty"`
+	TokenCommand []string `yaml:"token_command,omitempty"`
+	User         string   `yaml:"user,omitempty"`
 }
 
 // Path returns the config file path under os.UserConfigDir().
@@ -65,14 +65,17 @@ func Save(cfg *Config) error {
 	return os.WriteFile(p, data, 0600)
 }
 
-// ResolveToken runs token_command via sh -c and returns trimmed stdout.
+// ResolveToken executes token_command and returns trimmed stdout.
+// The command is executed directly (no shell interpretation) to prevent
+// shell injection attacks. Each element of the slice is passed as a
+// separate argument to exec.Command.
 // Returns an error if the command exits non-zero or token_command is empty.
 func (c *Config) ResolveToken() (string, error) {
-	if c.TokenCommand == "" {
+	if len(c.TokenCommand) == 0 {
 		return "", fmt.Errorf("no token_command configured")
 	}
 
-	cmd := exec.Command("sh", "-c", c.TokenCommand)
+	cmd := exec.Command(c.TokenCommand[0], c.TokenCommand[1:]...)
 	out, err := cmd.Output()
 	if err != nil {
 		return "", fmt.Errorf("token_command failed: %w", err)

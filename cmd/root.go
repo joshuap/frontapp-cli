@@ -8,6 +8,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/joshuap/frontapp-cli/internal/config"
 	"github.com/joshuap/frontapp-cli/internal/envelope"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -152,7 +153,11 @@ func Execute() {
 		if !errors.Is(err, ErrPrinted) {
 			var nte noTokenError
 			if errors.As(err, &nte) {
-				envelope.PrintError("front", err.Error(), "UNAUTHORIZED", "Set FRONT_API_TOKEN or run: front config set token_command '<command>'", nil)
+				fix := "Set FRONT_API_TOKEN or configure token_command in config file"
+				if p, err := config.Path(); err == nil {
+					fix = "Set FRONT_API_TOKEN or configure token_command in " + p
+				}
+				envelope.PrintError("front", err.Error(), "UNAUTHORIZED", fix, nil)
 			} else {
 				msg := err.Error()
 				fix := ""

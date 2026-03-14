@@ -61,13 +61,3 @@ type ConfigResult struct {
 	TokenCommand string `json:"token_command,omitempty"`
 	User         string `json:"user,omitempty"`
 }
-
-type ConfigSetResult struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-	Path  string `json:"path"`
-}
-
-type ConfigPathResult struct {
-	Path string `json:"path"`
-}

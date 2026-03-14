@@ -20,16 +20,38 @@ cp front ~/.local/bin
 ## Configure
 
 ```bash
-front config set token_command "op read op://Private/front_api_token/password"
-front config set user user@example.com
+export FRONT_API_TOKEN="your-api-token"
+export FRONT_USER="user@example.com"
 ```
 
-Or use environment variables (`FRONT_API_TOKEN`, `FRONT_USER`), which take precedence.
+Or use a config file:
+
+```yaml
+# macOS: ~/Library/Application Support/front/config.yaml
+# Linux: ~/.config/front/config.yaml
+user: user@example.com
+```
+
+Environment variables take precedence over config. Run `front config` to verify.
+
+### Token Command
+
+Instead of setting `FRONT_API_TOKEN` directly, you can configure a `token_command` to resolve the token dynamically from a secret manager:
+
+```yaml
+token_command:
+  - op
+  - read
+  - op://Vault/front_api_token/password
+```
+
+Each list element is a separate argument. The command is executed directly and its stdout is used as the token.
 
 ## Usage
 
 ```bash
 front                                    # list available commands
+front config                             # show current configuration
 front inboxes                            # list inboxes
 front inbox                              # search conversations (default: is:open is:unassigned)
 front inbox --assignee user@example.com  # filter by assignee
@@ -67,13 +89,19 @@ Errors include a `fix` field:
   "ok": false,
   "command": "front inboxes",
   "error": { "message": "no API token provided", "code": "UNAUTHORIZED" },
-  "fix": "Set FRONT_API_TOKEN or run: front config set token_command '<command>'"
+  "fix": "Set FRONT_API_TOKEN or configure token_command in ~/.config/front/config.yaml"
 }
 ```
 
 ## Agent Skill
 
 Install the skill so agents can use the CLI automatically:
+
+```bash
+npx skills add joshuap/frontapp-cli
+```
+
+Or manually:
 
 ```bash
 ln -s /path/to/frontapp-cli/skills/front ~/.claude/skills/front

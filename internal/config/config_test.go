@@ -14,7 +14,7 @@ func TestSaveAndLoad(t *testing.T) {
 	// We override by writing directly to the path returned by Path().
 
 	cfg := &Config{
-		TokenCommand: "echo secret",
+		TokenCommand: []string{"echo", "secret"},
 		User:         "alice@example.com",
 	}
 
@@ -35,8 +35,8 @@ func TestSaveAndLoad(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if loaded.TokenCommand != "echo secret" {
-		t.Errorf("expected token_command 'echo secret', got %q", loaded.TokenCommand)
+	if len(loaded.TokenCommand) != 2 || loaded.TokenCommand[0] != "echo" || loaded.TokenCommand[1] != "secret" {
+		t.Errorf("expected token_command [echo secret], got %v", loaded.TokenCommand)
 	}
 	if loaded.User != "alice@example.com" {
 		t.Errorf("expected user 'alice@example.com', got %q", loaded.User)
@@ -52,13 +52,13 @@ func TestLoad_MissingFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if cfg.TokenCommand != "" || cfg.User != "" {
+	if len(cfg.TokenCommand) != 0 || cfg.User != "" {
 		t.Error("expected zero-value config for missing file")
 	}
 }
 
 func TestResolveToken(t *testing.T) {
-	cfg := &Config{TokenCommand: "echo test-token"}
+	cfg := &Config{TokenCommand: []string{"echo", "test-token"}}
 	token, err := cfg.ResolveToken()
 	if err != nil {
 		t.Fatal(err)
@@ -77,10 +77,33 @@ func TestResolveToken_Empty(t *testing.T) {
 }
 
 func TestResolveToken_FailingCommand(t *testing.T) {
-	cfg := &Config{TokenCommand: "false"}
+	cfg := &Config{TokenCommand: []string{"false"}}
 	_, err := cfg.ResolveToken()
 	if err == nil {
 		t.Error("expected error for failing command")
+	}
+}
+
+func TestResolveToken_ArgsWithSpaces(t *testing.T) {
+	// Each slice element is a separate argv entry, so spaces are preserved.
+	cfg := &Config{TokenCommand: []string{"echo", "my secret token"}}
+	token, err := cfg.ResolveToken()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if token != "my secret token" {
+		t.Errorf("expected 'my secret token', got %q", token)
+	}
+}
+
+func TestResolveToken_MultipleArgs(t *testing.T) {
+	cfg := &Config{TokenCommand: []string{"echo", "my-secret-token"}}
+	token, err := cfg.ResolveToken()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if token != "my-secret-token" {
+		t.Errorf("expected 'my-secret-token', got %q", token)
 	}
 }
 
