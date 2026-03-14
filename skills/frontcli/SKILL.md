@@ -17,9 +17,16 @@ CLI for the Front customer support API. All output is JSON envelopes with `next_
 
 ## Setup
 
-Requires `FRONT_API_TOKEN` env var (or `--token` flag). Optionally set `FRONT_USER` to your email to scope inbox listings to your teammate.
+Configure a token command so the CLI can retrieve your API token automatically:
 
-If using 1Password, run with: `op run --env-file=.env -- front <command>`
+```bash
+front config set token_command "op read op://Private/front_api_token/password"
+front config set user user@example.com
+```
+
+Alternatively, set `FRONT_API_TOKEN` and `FRONT_USER` env vars (these take precedence over config).
+
+Run `front config` to view current configuration.
 
 ## Usage
 

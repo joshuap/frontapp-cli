@@ -12,4 +12,5 @@ require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/joshuap/frontapp-cli/internal/api"
+	"github.com/joshuap/frontapp-cli/internal/config"
 	"github.com/joshuap/frontapp-cli/internal/envelope"
 	"github.com/spf13/cobra"
 )
@@ -28,7 +29,13 @@ Set FRONT_USER to your email address to list only your inboxes
 			user       string
 		)
 
-		if email := os.Getenv("FRONT_USER"); email != "" {
+		email := os.Getenv("FRONT_USER")
+		if email == "" {
+			if cfg, err := config.Load(); err == nil {
+				email = cfg.ResolveUser()
+			}
+		}
+		if email != "" {
 			user = email
 			teammateID := "alt:email:" + email
 			resp, err := client.ListTeammateInboxesWithResponse(cmd.Context(), teammateID)

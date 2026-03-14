@@ -85,7 +85,7 @@ func ClassifyHTTPError(statusCode int, body []byte) (message, code, fix string) 
 
 	switch statusCode {
 	case 401:
-		return msg, "UNAUTHORIZED", "Set FRONT_API_TOKEN or pass --token"
+		return msg, "UNAUTHORIZED", "Set FRONT_API_TOKEN or run: front config set token_command '<command>'"
 	case 404:
 		return msg, "NOT_FOUND", "Check the resource ID and try again"
 	case 403:

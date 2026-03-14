@@ -13,16 +13,16 @@ import (
 
 // --- Root command: lists all flat commands ---
 
-func TestRootCommand_ListsFlatCommands(t *testing.T) {
+func TestRootCommand_ListsCommands(t *testing.T) {
 	var names []string
 	for _, c := range rootCmd.Commands() {
-		if c.Hidden || c.RunE == nil {
+		if c.Hidden {
 			continue
 		}
 		names = append(names, c.Name())
 	}
 
-	expected := []string{"inbox", "inboxes", "read"}
+	expected := []string{"config", "inbox", "inboxes", "read"}
 	if len(names) != len(expected) {
 		t.Fatalf("expected %d commands, got %d: %v", len(expected), len(names), names)
 	}
@@ -40,14 +40,34 @@ func TestRootCommand_ListsFlatCommands(t *testing.T) {
 	}
 }
 
-func TestRootCommand_NoParentGroups(t *testing.T) {
+func TestConfigCommand_HasSubcommands(t *testing.T) {
+	var found bool
 	for _, c := range rootCmd.Commands() {
-		if c.Hidden {
-			continue
+		if c.Name() == "config" {
+			found = true
+			if !c.HasSubCommands() {
+				t.Error("config command should have subcommands")
+			}
+			var subs []string
+			for _, s := range c.Commands() {
+				subs = append(subs, s.Name())
+			}
+			for _, expected := range []string{"set", "path"} {
+				has := false
+				for _, s := range subs {
+					if s == expected {
+						has = true
+						break
+					}
+				}
+				if !has {
+					t.Errorf("config missing subcommand %q, has %v", expected, subs)
+				}
+			}
 		}
-		if c.HasSubCommands() {
-			t.Errorf("command %q has subcommands — should be flat", c.Name())
-		}
+	}
+	if !found {
+		t.Error("config command not found")
 	}
 }
 

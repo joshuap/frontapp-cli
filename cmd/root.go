@@ -133,8 +133,6 @@ func actionFor(key string) envelope.Action {
 
 
 func init() {
-	rootCmd.PersistentFlags().String("token", "", "Front API token (or set FRONT_API_TOKEN)")
-	rootCmd.PersistentFlags().SetAnnotation("token", "internal", []string{"true"})
 	rootCmd.CompletionOptions.HiddenDefaultCmd = true
 	rootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
 	rootCmd.Version = Version
@@ -154,7 +152,7 @@ func Execute() {
 		if !errors.Is(err, ErrPrinted) {
 			var nte noTokenError
 			if errors.As(err, &nte) {
-				envelope.PrintError("front", err.Error(), "UNAUTHORIZED", "Set FRONT_API_TOKEN or pass --token", nil)
+				envelope.PrintError("front", err.Error(), "UNAUTHORIZED", "Set FRONT_API_TOKEN or run: front config set token_command '<command>'", nil)
 			} else {
 				msg := err.Error()
 				fix := ""

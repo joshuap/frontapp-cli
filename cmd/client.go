@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/joshuap/frontapp-cli/internal/api"
+	"github.com/joshuap/frontapp-cli/internal/config"
 	"github.com/joshuap/frontapp-cli/internal/envelope"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -15,9 +16,12 @@ import (
 const defaultBaseURL = "https://api2.frontapp.com"
 
 func newClient(cmd *cobra.Command) (*api.ClientWithResponses, error) {
-	token, _ := cmd.Flags().GetString("token")
+	token := os.Getenv("FRONT_API_TOKEN")
 	if token == "" {
-		token = os.Getenv("FRONT_API_TOKEN")
+		cfg, err := config.Load()
+		if err == nil {
+			token, _ = cfg.ResolveToken()
+		}
 	}
 	if token == "" {
 		return nil, errNoToken
