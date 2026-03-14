@@ -3,7 +3,7 @@ name: front
 displayName: Front
 description: Interact with Front customer support platform via the front CLI. Use when searching conversations, reading messages, or listing inboxes in Front. Triggered by mentions of Front, support tickets, customer conversations, or helpdesk operations.
 version: 0.1.0
-author: josh
+author: Joshua Wood
 tags:
   - front
   - support
