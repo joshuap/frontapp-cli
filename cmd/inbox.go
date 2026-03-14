@@ -181,6 +181,21 @@ func mapConversation(c api.ConversationResponse) ConversationSummary {
 		s.Date = time.Unix(int64(*c.CreatedAt), 0).UTC().Format(time.RFC3339)
 	}
 
+	if c.Assignee.Email != "" {
+		name := c.Assignee.FirstName
+		if c.Assignee.LastName != "" {
+			name += " " + c.Assignee.LastName
+		}
+		s.Assignee = &ContactSummary{
+			Name:  name,
+			Email: c.Assignee.Email,
+		}
+	}
+
+	if c.WaitingSince != nil {
+		s.WaitingSince = time.Unix(int64(*c.WaitingSince), 0).UTC().Format(time.RFC3339)
+	}
+
 	if len(c.Tags) > 0 {
 		s.Tags = make([]string, len(c.Tags))
 		for i, t := range c.Tags {

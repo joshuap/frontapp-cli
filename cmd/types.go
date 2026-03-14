@@ -13,12 +13,14 @@ type InboxResult struct {
 }
 
 type ConversationSummary struct {
-	ID      string         `json:"id"`
-	Subject string         `json:"subject"`
-	Status  string         `json:"status"`
-	From    ContactSummary `json:"from"`
-	Date    string         `json:"date,omitempty"`
-	Tags    []string       `json:"tags,omitempty"`
+	ID           string          `json:"id"`
+	Subject      string          `json:"subject"`
+	Status       string          `json:"status"`
+	Assignee     *ContactSummary `json:"assignee,omitempty"`
+	From         ContactSummary  `json:"from"`
+	Date         string          `json:"date,omitempty"`
+	WaitingSince string          `json:"waiting_since,omitempty"`
+	Tags         []string        `json:"tags,omitempty"`
 }
 
 type ContactSummary struct {
