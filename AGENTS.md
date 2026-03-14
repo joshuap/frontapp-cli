@@ -1,6 +1,6 @@
 # Front CLI
 
-Agent-first CLI for the Front API. JSON envelope output with `next_actions`.
+Agent-first CLI for the Front API. HATEOAS JSON envelope output with `next_actions`.
 
 ## Build & Test
 
