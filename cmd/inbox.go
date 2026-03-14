@@ -19,7 +19,7 @@ var inboxCmd = &cobra.Command{
 Optionally pass an inbox ID to scope results to a single inbox.
 
 Search syntax supports: is:open, is:archived, is:assigned, is:unassigned,
-inbox:<inbox_id>, from:<handle>, to:<handle>, tag:<tag_id>, assignee:<team_id>,
+inbox:<inbox_id>, from:<handle>, to:<handle>, tag:<tag_id>, assignee:<tea_id>,
 before:<unix_ts>, after:<unix_ts>, contact:<contact_id>, and free text.`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -118,6 +118,12 @@ before:<unix_ts>, after:<unix_ts>, contact:<contact_id>, and free text.`,
 // buildSearchQuery composes the Front search query from args and flags.
 func buildSearchQuery(cmd *cobra.Command, args []string) (string, error) {
 	query, _ := cmd.Flags().GetString("query")
+
+	// If --assignee is used with the default query, swap is:unassigned for is:assigned
+	if v, _ := cmd.Flags().GetString("assignee"); v != "" && !cmd.Flags().Changed("query") {
+		query = strings.Replace(query, "is:unassigned", "is:assigned", 1)
+	}
+
 	parts := []string{query}
 
 	if len(args) > 0 {
@@ -125,6 +131,9 @@ func buildSearchQuery(cmd *cobra.Command, args []string) (string, error) {
 	}
 	if v, _ := cmd.Flags().GetString("from"); v != "" {
 		parts = append(parts, "from:"+v)
+	}
+	if v, _ := cmd.Flags().GetString("assignee"); v != "" {
+		parts = append(parts, "assignee:alt:email:"+v)
 	}
 	if v, _ := cmd.Flags().GetString("before"); v != "" {
 		ts, err := dateToUnix(v)
@@ -185,6 +194,7 @@ func mapConversation(c api.ConversationResponse) ConversationSummary {
 func init() {
 	inboxCmd.Flags().String("query", "is:open is:unassigned", "Search query (Front search syntax)")
 	inboxCmd.Flags().String("from", "", "Filter by sender handle (shortcut for from:<handle> in query)")
+	inboxCmd.Flags().String("assignee", "", "Filter by assignee email address")
 	inboxCmd.Flags().String("before", "", "Before date, YYYY-MM-DD (shortcut for before:<ts> in query)")
 	inboxCmd.Flags().String("after", "", "After date, YYYY-MM-DD (shortcut for after:<ts> in query)")
 	inboxCmd.Flags().Int("limit", defaultLimit, "Maximum number of results to return")

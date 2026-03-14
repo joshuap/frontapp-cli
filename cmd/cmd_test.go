@@ -240,6 +240,25 @@ func TestBuildSearchQuery_AllOptions(t *testing.T) {
 	}
 }
 
+func TestBuildSearchQuery_WithAssignee(t *testing.T) {
+	cmd := newSearchCmd()
+	cmd.Flags().String("assignee", "", "")
+	cmd.Flags().Set("assignee", "alice@example.com")
+	got, err := buildSearchQuery(cmd, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(got, "assignee:alt:email:alice@example.com") {
+		t.Errorf("expected assignee:alt:email:alice@example.com in query, got %q", got)
+	}
+	if strings.Contains(got, "is:unassigned") {
+		t.Errorf("should swap is:unassigned for is:assigned when --assignee used, got %q", got)
+	}
+	if !strings.Contains(got, "is:assigned") {
+		t.Errorf("should contain is:assigned when --assignee used, got %q", got)
+	}
+}
+
 func TestBuildSearchQuery_CustomQuery(t *testing.T) {
 	cmd := newSearchCmd()
 	cmd.Flags().Set("query", "is:archived tag:tag_123")
