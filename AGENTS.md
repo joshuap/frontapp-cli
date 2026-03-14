@@ -5,7 +5,7 @@ Agent-first CLI for the Front API. HATEOAS JSON envelope output with `next_actio
 ## Build & Test
 
 ```
-go build -o front .
+go build -o front ./cmd/front
 go test ./...
 go vet ./...
 ```

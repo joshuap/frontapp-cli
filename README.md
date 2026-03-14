@@ -5,7 +5,7 @@ Agent-first CLI for the [Front](https://front.com) API. Every command returns st
 ## Install
 
 ```bash
-go install github.com/joshuap/frontapp-cli@latest
+go install github.com/joshuap/frontapp-cli/cmd/front@latest
 ```
 
 Or build from source:
@@ -13,7 +13,7 @@ Or build from source:
 ```bash
 git clone https://github.com/joshuap/frontapp-cli.git
 cd frontapp-cli
-go build -o front .
+go build -o front ./cmd/front
 cp front ~/.local/bin
 ```
 
